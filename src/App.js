@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import Router from "Router";
 import { auth } from 'fbinstance'
-import { onAuthStateChanged } from "@firebase/auth";
+import { initializeAuth, onAuthStateChanged } from "@firebase/auth";
 
 function App() {
-  const user = auth.currentUser;
-  const [isLogin, setIsLogin] = useState(user);
+  const [init, setInit] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   useEffect(() => {
-    onAuthStateChanged(auth, () => console.log(user))
+    onAuthStateChanged(auth, (user) => {
+      if(user){
+        setIsLogin(true)
+      }else{
+        setIsLogin(false)
+      }
+      setInit(true)
+    })
   }, [])
   return (
     <>
-      <Router isLogin={isLogin} />
+      {init ? <Router isLogin={isLogin} /> : 'initializing...'}
       <footer>&copy; {new Date().getFullYear()} Flip</footer>
     </>
   )
